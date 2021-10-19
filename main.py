@@ -11,6 +11,7 @@ if __name__ == '__main__':
         if 'bonjour' in command:
             print('Bonjour, comment allez-vous ?')
             f.speak('Bonjour, comment allez-vous ?')
+            break
         elif 'au revoir' in command or 'bye' in command or "stop" in command or 'arrête' in command:
             print('Au revoir !')
             f.speak('Au revoir !')
@@ -33,22 +34,26 @@ if __name__ == '__main__':
             break
         elif 'cherche' in command:
             command = command.replace('cherche', '')
-            web.open_new_tab(command)
+            search = f'https://www.google.fr/search?q={command}'
+            web.open_new_tab(search)
             f.speak('Recherche de la demande sur Google')
             break
         elif 'recherche' in command:
             command = command.replace('recherche', '')
-            web.open_new_tab(command)
+            search = f'https://www.google.fr/search?q={command}'
+            web.open_new_tab(search)
             f.speak('Recherche de la demande sur Google')
             break
         elif 'c\'est quoi' in command:
-            command = command.replace('recherche', '')
-            web.open_new_tab(command)
+            command = command.replace('c\'est quoi', '')
+            search = f'https://www.google.fr/search?q={command}'
+            web.open_new_tab(search)
             f.speak('Recherche de la demande sur Google')
             break
         elif 'qu\'est-ce que' in command:
             command = command.replace('qu\'est-ce que', '')
-            web.open_new_tab(command)
+            search = f'https://www.google.fr/search?q={command}'
+            web.open_new_tab(search)
             f.speak('Recherche de la demande sur Google')
             break
         elif 'joue' in command:
@@ -72,9 +77,9 @@ if __name__ == '__main__':
             pwk.playonyt(command)
             break
         elif 'qui es-tu' in command or 'tu es qui' in command or 'tu peux faire quoi' in command or \
-                'tu sais faire quoi' in command or 'que sais-tu faire' in command:
+                'tu sais faire quoi' in command or 'que sais-tu faire' in command or 'que peux-tu faire' in command:
             f.speak('Je suis PY-AI, je suis un assistant virtuel pouvant vous assistez sur certaines tâches simples. '
-                    'Je peux faire une recherche Google, faire une recherche Youtube, ouvrir Facebook, vous donner '
+                    'Je peux faire une recherche Youtube ou Google, ouvrir Facebook, vous donner '
                     'l\'heure. Si vous voulez d\'autres fonctionnalités, veuillez '
                     'contacter mon créateur. Merci')
             break
@@ -82,3 +87,4 @@ if __name__ == '__main__':
             print('Mon créateur se prénomme Fenbjorn, vous pourrez le retrouver sur GitHub')
             f.speak('Mon créateur se prénomme Fenbjorn, vous pourrez le retrouver sur GitHub')
             break
+
