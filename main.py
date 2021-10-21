@@ -1,90 +1,118 @@
 import datetime
 import webbrowser as web
 import pywhatkit as pwk
-import functions as f
+import speech_recognition as sr
+import os
+import platform
+import pyttsx3 as ttx
+
+# Variables de configuration de la voix
+engine = ttx.init()
+ai_voice = engine.getProperty('rate')
+engine.setProperty('rate', 178)
+ai_voice = engine.getProperty('voices')
+engine.setProperty('voice', ai_voice[0])
+
+
+# Fonction qui récupère l'os et retourne le nom de l'utilisateur en fonction de l'os
+def os_name():
+    # Variable permettant de récupérer l'os
+    osname = platform.system()
+
+    if osname == 'Windows':
+        user = os.getenv('username')
+    else:
+        user = os.environ['USER']
+    return user
+
+
+# Fonction qui donne la parole à l'ia
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+# Fonction qui récupère votre commande vocale
+def take_command():
+    listener = sr.Recognizer()
+    with sr.Microphone() as source:
+        print('Que puis-je pour vous ?')
+        speak('Que puis-je pour vous ?')
+        voice = listener.listen(source)
+        try:
+            command = listener.recognize_google(voice, language='fr-FR')
+            print(f'Vous avez dit : {command}\n')
+        except Exception as e:
+            speak('Désolé, je n\'ai pas compris... Veuillez réessayer')
+            return 'None'
+        return command
+
+
+# Fonction qui souhaite la bienvenue en fonction de l'heure
+def wish_me():
+    hour = datetime.datetime.now().hour
+    if 0 <= hour < 18:
+        print(f'Bonjour {os_name()}')
+        speak(f'Bonjour {os_name()}')
+    else:
+        print(f'Bonsoir {os_name()}')
+        speak(f'Bonsoir {os_name()}')
+
 
 # Corps principal du code
 if __name__ == '__main__':
-    f.wish_me()
+    wish_me()
     while True:
-        command = f.take_command().lower()
+        command = take_command().lower()
         if 'bonjour' in command:
             print('Bonjour, comment allez-vous ?')
-            f.speak('Bonjour, comment allez-vous ?')
+            speak('Bonjour, comment allez-vous ?')
             break
         elif 'au revoir' in command or 'bye' in command or "stop" in command or 'arrête' in command:
             print('Au revoir !')
-            f.speak('Au revoir !')
+            speak('Au revoir !')
             break
         elif 'google' in command:
             web.open_new_tab('https://www.google.com')
-            f.speak('Ouverture de google')
+            speak('Ouverture de google')
             break
         elif 'facebook' in command:
             web.open_new_tab('https://www.facebook.com')
-            f.speak('Ouverture de Facebook')
+            speak('Ouverture de Facebook')
             break
         elif 'youtube' in command:
             web.open_new_tab('https://www.youtube.com')
-            f.speak('Ouverture de Youtube')
+            speak('Ouverture de Youtube')
             break
         elif 'quelle heure' in command:
             strTime = datetime.datetime.now().strftime("%H:%M")
-            f.speak(f"Il est {strTime}")
+            speak(f"Il est {strTime}")
             break
-        elif 'cherche' in command:
+        elif 'cherche' in command or 'qu\'est-ce que' in command or 'c\'est quoi' in command or 'recherche' in command:
             command = command.replace('cherche', '')
-            search = f'https://www.google.fr/search?q={command}'
-            web.open_new_tab(search)
-            f.speak('Recherche de la demande sur Google')
-            break
-        elif 'recherche' in command:
+            command = command.replace('qu\'est-ce que', '')
+            command = command.replace('c\'est quoi', '')
             command = command.replace('recherche', '')
             search = f'https://www.google.fr/search?q={command}'
             web.open_new_tab(search)
-            f.speak('Recherche de la demande sur Google')
+            speak('Recherche de la demande sur Google')
             break
-        elif 'c\'est quoi' in command:
-            command = command.replace('c\'est quoi', '')
-            search = f'https://www.google.fr/search?q={command}'
-            web.open_new_tab(search)
-            f.speak('Recherche de la demande sur Google')
-            break
-        elif 'qu\'est-ce que' in command:
-            command = command.replace('qu\'est-ce que', '')
-            search = f'https://www.google.fr/search?q={command}'
-            web.open_new_tab(search)
-            f.speak('Recherche de la demande sur Google')
-            break
-        elif 'joue' in command:
-            command = command.replace('joue', '')
-            f.speak(f'Lecture de {command} sur Youtube')
-            pwk.playonyt(command)
-            break
-        elif 'mets la chanson' in command:
-            command = command.replace('mets la chanson', '')
-            f.speak(f'Lecture de {command} sur Youtube')
-            pwk.playonyt(command)
-            break
-        elif 'mets du' in command:
-            command = command.replace('mets du', '')
-            f.speak(f'Lecture de {command} sur Youtube')
-            pwk.playonyt(command)
-            break
-        elif 'sur Youtube' in command:
+        elif 'sur Youtube' in command or 'mets du' in command or 'mets la chanson' in command or 'joue' in command:
             command = command.replace('sur Youtube', '')
-            f.speak(f'Lecture de {command} sur Youtube')
+            command = command.replace('mets du', '')
+            command = command.replace('mets la chanson', '')
+            command = command.replace('joue', '')
+            speak(f'Lecture de {command} sur Youtube')
             pwk.playonyt(command)
             break
         elif 'qui es-tu' in command or 'tu es qui' in command or 'tu peux faire quoi' in command or \
                 'tu sais faire quoi' in command or 'que sais-tu faire' in command or 'que peux-tu faire' in command:
-            f.speak('Je suis PY-AI, je suis un assistant virtuel pouvant vous assistez sur certaines tâches simples. '
-                    'Je peux faire une recherche Youtube ou Google, ouvrir Facebook, vous donner '
-                    'l\'heure. Si vous voulez d\'autres fonctionnalités, veuillez '
-                    'contacter mon créateur. Merci')
+            speak('Je suis Cobra, je suis un assistant virtuel pouvant vous assistez sur certaines tâches simples. '
+                  'Je peux faire une recherche Google, ouvrir Facebook, Google ou Youtube, jouer de la musique, '
+                  'vous donner l\'heure. Si vous voulez d\'autres fonctionnalités, veuillez '
+                  'contacter mon créateur. Merci')
             break
         elif 'qui t\'as fait' in command or 'qui est ton créateur' in command:
             print('Mon créateur se prénomme Fenbjorn, vous pourrez le retrouver sur GitHub')
-            f.speak('Mon créateur se prénomme Fenbjorn, vous pourrez le retrouver sur GitHub')
+            speak('Mon créateur se prénomme Fenbjorn, vous pourrez le retrouver sur GitHub')
             break
-
